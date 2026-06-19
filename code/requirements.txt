@@ -1,0 +1,5 @@
+pydantic>=2.7
+pandas>=2.2
+openai>=1.50
+Pillow>=10.0
+pillow-avif-plugin

@@ -1,0 +1,90 @@
+{
+  "mode": "real",
+  "strategy_a_single_pass": {
+    "summary": {
+      "n_claims": 20,
+      "total_model_calls": 20,
+      "avg_calls_per_claim": 1.0,
+      "escalations_triggered": 0,
+      "elapsed_s": 72.33
+    },
+    "metrics": {
+      "n_ground_truth": 20,
+      "n_matched": 20,
+      "n_missing_predictions": 0,
+      "claim_status_accuracy": 0.75,
+      "issue_type_accuracy": 0.65,
+      "object_part_accuracy": 0.95,
+      "severity_accuracy": 0.45,
+      "evidence_standard_met_accuracy": 0.9,
+      "valid_image_accuracy": 0.95,
+      "claim_status_per_class": {
+        "supported": {
+          "precision": 0.8,
+          "recall": 0.923,
+          "f1": 0.857,
+          "support": 13
+        },
+        "contradicted": {
+          "precision": 0.5,
+          "recall": 0.2,
+          "f1": 0.286,
+          "support": 5
+        },
+        "not_enough_information": {
+          "precision": 0.667,
+          "recall": 1.0,
+          "f1": 0.8,
+          "support": 2
+        }
+      },
+      "risk_flags_mean_jaccard": 0.759,
+      "supporting_image_ids_mean_jaccard": 0.925
+    }
+  },
+  "strategy_b_full_circuit_breaker": {
+    "summary": {
+      "n_claims": 20,
+      "total_model_calls": 25,
+      "avg_calls_per_claim": 1.25,
+      "escalations_triggered": 1,
+      "elapsed_s": 110.0
+    },
+    "metrics": {
+      "n_ground_truth": 20,
+      "n_matched": 20,
+      "n_missing_predictions": 0,
+      "claim_status_accuracy": 0.75,
+      "issue_type_accuracy": 0.65,
+      "object_part_accuracy": 0.9,
+      "severity_accuracy": 0.5,
+      "evidence_standard_met_accuracy": 0.9,
+      "valid_image_accuracy": 0.9,
+      "claim_status_per_class": {
+        "supported": {
+          "precision": 0.8,
+          "recall": 0.923,
+          "f1": 0.857,
+          "support": 13
+        },
+        "contradicted": {
+          "precision": 0.5,
+          "recall": 0.2,
+          "f1": 0.286,
+          "support": 5
+        },
+        "not_enough_information": {
+          "precision": 0.667,
+          "recall": 1.0,
+          "f1": 0.8,
+          "support": 2
+        }
+      },
+      "risk_flags_mean_jaccard": 0.721,
+      "supporting_image_ids_mean_jaccard": 0.9
+    }
+  },
+  "final_strategy_used_for_output_csv": "strategy_b_full_circuit_breaker",
+  "rationale": "Strategy B is what main.py runs by default and what produced output.csv. Strategy A spends roughly one model call per claim and accepts the first answer regardless of confidence; B spends more calls only on claims the model itself flags as uncertain (confidence 0.4-0.75) or visually suspect (claim_mismatch / wrong_object / possible_manipulation / non_original_image), and routes genuine two-pass disagreement to a stronger tie-breaker model rather than guessing. The cost delta (see avg_calls_per_claim above) is small because escalation is rare by construction -- it only fires on actual disagreement, not on every borderline case.",
+  "caveat": null
+}
